@@ -19,6 +19,9 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -37,23 +40,42 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		// packets := 0
+
 		targetAddr := args[0]
 
-		ping := func(addr string) {
-			sent, rtt, err := Ping(addr, 50)
-			if err != nil {
-				log.Printf("[FAILED] Ping %s: %s\nPacket was not sent\n", addr, err)
-				return
-			}
-			resolvedIP, _ := net.ResolveIPAddr("ip4", addr)
-			if sent {
-				fmt.Printf("Reply from %s: bytes=32 time=%s\n", resolvedIP, rtt)
-			} else {
-				log.Printf("[FAILED] Ping %s: %s\nPacket was not sent\n", addr, err)
-			}
-		}
+		packetSent, packetRecv := 0, 0
 
-		ping(targetAddr)
+		// Handle CTRL-C interrupt, else infinite loop
+		c := make(chan os.Signal)
+		signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+		go func() { // start a go routine that will run until interrupt
+			<-c
+			packetLoss := (packetSent - packetRecv)
+			// packetLostPerc := int64((packetLoss / packetSent) * 100)
+			fmt.Printf("\nPackets: Sent = %d, Recieved = %d, Lost = %d ", packetSent, packetRecv, packetLoss)
+			os.Exit(0)
+		}()
+
+		for {
+			ping := func(addr string) {
+				sent, rtt, err := Ping(addr, 50)
+				packetSent++
+				if err != nil {
+					log.Printf("[FAILED] Ping %s: %s\nPacket was not sent\n", addr, err)
+					return
+				}
+				resolvedIP, _ := net.ResolveIPAddr("ip4", addr)
+				if sent {
+					fmt.Printf("Reply from %s: bytes=32 time=%s\n", resolvedIP, rtt)
+					packetRecv++
+				} else {
+					log.Printf("[FAILED] Ping %s: %s\nPacket was not sent\n", addr, err)
+				}
+			}
+			ping(targetAddr)
+			time.Sleep(3 * time.Second)
+		}
 	},
 }
 
