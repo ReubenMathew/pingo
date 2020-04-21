@@ -21,6 +21,7 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 
@@ -31,18 +32,20 @@ import (
 
 // ipv4Cmd represents the ipv4 command
 var ipv4Cmd = &cobra.Command{
-	Use:   "ipv4",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:   "ipv4 [ip addr] [timeout in milliseconds (optional)]",
+	Short: "sends ICMP requests to an address",
+	Long:  `sends ICMP requests to an address`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// packets := 0
-
+		var timeout int
 		targetAddr := args[0]
+
+		if len(args) == 2 {
+			timeout, _ = strconv.Atoi(args[1])
+		} else {
+			timeout = 100
+		}
+		// fmt.Println(timeout)
 
 		packetSent, packetRecv := 0, 0
 
@@ -52,14 +55,13 @@ to quickly create a Cobra application.`,
 		go func() { // start a go routine that will run until interrupt
 			<-c
 			packetLoss := (packetSent - packetRecv)
-			// packetLostPerc := int64((packetLoss / packetSent) * 100)
 			fmt.Printf("\nPackets: Sent = %d, Recieved = %d, Lost = %d ", packetSent, packetRecv, packetLoss)
 			os.Exit(0)
 		}()
 
 		for {
 			ping := func(addr string) {
-				sent, rtt, err := Ping(addr, 50)
+				sent, rtt, err := Ping(addr, timeout)
 				packetSent++
 				if err != nil {
 					log.Printf("[FAILED] Ping %s: %s\nPacket was not sent\n", addr, err)
@@ -169,7 +171,6 @@ func Ping(addr string, timeout int) (bool, time.Duration, error) {
 
 func init() {
 	rootCmd.AddCommand(ipv4Cmd)
-
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
@@ -178,5 +179,5 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	ipv4Cmd.Flags().BoolP("timeout", "t", false, "set timeout in milliseconds")
+	// ipv4Cmd.Flags().BoolP("timeout", "t", false, "set timeout in milliseconds")
 }
