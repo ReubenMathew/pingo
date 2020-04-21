@@ -15,8 +15,11 @@ limitations under the License.
 */
 package main
 
-import "pingo/cmd"
+import (
+	"pingo/cmd"
+)
 
 func main() {
+	// fmt.Println("inside main")
 	cmd.Execute()
 }
