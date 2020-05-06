@@ -6,11 +6,11 @@ Pingo is a lightweight ICMP echo request CLI.
 
 ## Installation
 
-Use go get to install pingo.
+Use `go get` to install pingo.
 
 ```bash
-go get https://github.com/ReubenMathew/pingo
-go install pingo
+$ go get https://github.com/ReubenMathew/pingo
+$ go install pingo
 ```
 
 ## Usage
