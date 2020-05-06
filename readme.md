@@ -16,9 +16,7 @@ go install pingo
 ## Usage
 
 ```bash
-pingo ipv4 google.com 5
-            ^         ^
-        ip address timeout (ms)
+$ pingo ipv4 [address] [timeout]
 ```
 
 ## Contributing
