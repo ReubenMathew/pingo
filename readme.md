@@ -1,6 +1,7 @@
 # Pingo
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/ReubenMathew/pingo)](https://goreportcard.com/report/github.com/ReubenMathew/pingo)
+![Build](https://github.com/ReubenMathew/pingo/workflows/Build/badge.svg)
 
 Pingo is a lightweight ICMP echo request CLI.
 

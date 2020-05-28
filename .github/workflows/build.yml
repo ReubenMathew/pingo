@@ -1,5 +1,5 @@
 on: [push, pull_request]
-name: Test
+name: Build
 jobs:
   test:
     strategy:
@@ -15,4 +15,4 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Test
-      run: cd src go build .
+      run: cd src && go build .
