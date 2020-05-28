@@ -6,17 +6,31 @@ Pingo is a lightweight ICMP echo request CLI.
 
 ## Installation
 
-Use `go get` to install pingo.
+Check the *releases* page for platform specific download
 
-```bash
-$ go get https://github.com/ReubenMathew/pingo
-$ go install pingo
-```
+### Build from source
+
+Navigate to `/src` and run `go build -v -o pingo`
+
+`go build -v -o pingo.exe` for Windows platforms
+
+
+### Build for all platforms 
+Navigate to `/tools` and run `./build.sh`
+
+*Makefile coming soon*
 
 ## Usage
 
 ```bash
-$ pingo ipv4 [address] [timeout]
+$ ./pingo
+```
+
+### Example
+```bash
+? Address to ping:  192.168.0.1
+? Choose an IP protocol:  ipv4                                 
+? Enter a timeout in ms:  200
 ```
 
 ## Contributing
